@@ -200,6 +200,10 @@ class Store {
         }
     }
 
+    get currentUser() {
+        return this.state.currentUser;
+    }
+
     get workingDays() {
         return this.state.workingDays;
     }

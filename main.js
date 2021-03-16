@@ -1,8 +1,6 @@
-import MainMenu from './components/MainMenu/MainMenu.jsx';
 import AuthPage from './pages/AuthPage/AuthPage.jsx';
-import TableComponent from './components/TableComponent/TableComponent.jsx';
-import MultiSelect from "./components/selectComponent/selectComponent";
 import EventRemovePage from "./pages/EventRemovePage/EventRemovePage.jsx";
+import MainPage from "./pages/MainPage/MainPage.jsx";
 
 import React, { Fragment } from "react";
 import ReactDOM from "react-dom";
@@ -20,21 +18,17 @@ import EventCreationPage from './pages/EventCreationPage/EventCreationPage.jsx';
 
 let container = document.querySelector("#main");
 
-customElements.define("multi-select", MultiSelect);
+// customElements.define("multi-select", MultiSelect);
 
 function App() {
     return (
         <Router>
             <Switch>
                 <Route exact path="/">
-                    <TableComponent />
-                    <MainMenu />
+                    <MainPage />
                 </Route>
                 <Route path="/create">
                     <EventCreationPage />
-                </Route>
-                <Route path="/auth">
-                    <AuthPage />
                 </Route>
                 <Route path="/remove/:id">
                     <EventRemovePage />
@@ -51,17 +45,21 @@ function render(app, container) {
     );
 };
 
-if (Store.isLoggedIn) {
-    render (
-        <App />, 
-        container
-    );
-} else {
-    render (
-        <AuthPage />,
-        container
-    )
-}
+Store.getCurrentUser()
+.then(() => {
+    if (Store.isLoggedIn) {
+        render (
+            <App />, 
+            container
+        );
+    } else {
+        render (
+            <AuthPage />,
+            container
+        )
+    }
+})
+
 
 subscribe("logout", () => {
     render (

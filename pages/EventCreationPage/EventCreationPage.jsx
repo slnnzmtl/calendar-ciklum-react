@@ -1,16 +1,16 @@
 import React from "react";
-import EventCreationForm from "../../components/newEvent/newEvent.js";
+import EventCreationForm from "../../components/newEvent/EventCreationForm.jsx";
 
 import "./EventCreationPage.scss";
 
-customElements.define("new-event", EventCreationForm);
+// customElements.define("new-event", EventCreationForm);
 
 export default function EventCreationPage() {
 
   return (
     <div className="event-creation">
-      {/* <EventCreationForm /> */}
-      <new-event />
+      <EventCreationForm />
+      {/* <new-event /> */}
     </div>
   )
 }
