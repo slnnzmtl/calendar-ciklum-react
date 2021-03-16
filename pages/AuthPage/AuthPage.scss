@@ -1,0 +1,121 @@
+@import "../../styles/variables.scss";
+
+.auth-wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    position: absolute;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -ms-flex-line-pack: center;
+        align-content: center;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $colorMain;
+
+    .auth {
+        
+        padding: 50px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        width: 500px;
+        height: 300px;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        background-color: $colorMain;
+        -webkit-box-shadow: $shadow1;
+                box-shadow: $shadow1;
+        border-radius: 5px;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+
+        &__title {
+            font-family: $font1;   
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        &__select {
+            -webkit-transition: ease 0.5s;
+            -o-transition: ease 0.5s;
+            transition: ease 0.5s;
+            margin-bottom: 20px;
+            font-size: 13px;
+            background-color: $colorMain;
+            box-shadow: $shadow1;
+            -webkit-box-shadow:  $shadow3;
+            width: 100%;
+            height: 35px;            
+
+            @media (max-width: 500px) {
+                width: 100%;
+                margin-top: 10px;  
+            }
+
+            border-radius: 5px;
+            border: none; 
+            padding-left: 10px;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            outline: none;
+
+            &:hover {
+                -webkit-box-shadow: $shadow4;
+                box-shadow: $shadow4;
+            }
+
+            &:focus {
+                -webkit-box-shadow: $shadow4;
+                box-shadow: $shadow4;
+            }
+            
+        }
+
+        &__button {
+            align-self: flex-end;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            background-color: $colorMain;
+            margin-bottom: 10px;
+            width: 30%;
+            height: 30px;
+            margin-left: 10px;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            cursor: pointer;
+            -webkit-transition: ease 0.5s;
+            -o-transition: ease 0.5s;
+            transition: ease 0.5s;
+            -webkit-box-shadow: $shadow1;
+                    box-shadow: $shadow1;
+            &:hover {
+              -webkit-box-shadow: $shadow2;
+                      box-shadow: $shadow2;
+            }
+            &:active {
+              -webkit-box-shadow:  $shadow3;
+                      box-shadow:  $shadow3;
+            }
+        }
+    }
+}

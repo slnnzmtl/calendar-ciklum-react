@@ -1,0 +1,40 @@
+<template>
+    <div class="new-event">
+        <Label class="new-event__item">
+            Name:   
+            <input autofocus
+                class="new-event__input"
+                id="name"
+            ></input>
+        </Label>
+
+        <Label 
+            class="new-event__item"
+            id="select-participants"
+        >Members:
+        </Label>
+
+        <Label 
+            class="new-event__item" 
+        >Day:
+        <select 
+            class="new-event__input"
+            id="select-days"
+        ></select>
+        </label>
+
+        <Label 
+            class="new-event__item" 
+        >Time:
+            <select 
+            class="new-event__input"
+            id="select-time"
+            ></select>
+        </label>
+
+        <div class="new-event__button-wrapper">
+            <button class="new-event__button button-submit">Create</button>
+            <button class="new-event__button button-cancel">Cancel</button>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,5 @@
+05.03 
+    - Event flags OOP refactoring. 
+    - Calendar component OOP refactoring.
+    - iterate over the array of events 5 times instead of 40
+    
