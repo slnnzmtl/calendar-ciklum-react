@@ -2,75 +2,113 @@ import AuthPage from './pages/AuthPage/AuthPage.jsx';
 import EventRemovePage from "./pages/EventRemovePage/EventRemovePage.jsx";
 import MainPage from "./pages/MainPage/MainPage.jsx";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import {
     HashRouter as Router,
     Switch,
     Route,
-    Link
+    Redirect,
   } from "react-router-dom";
 
 import { subscribe } from "./utils/eventBus";
 import Store from "./utils/store";
 import '/styles/main.scss';
 import EventCreationPage from './pages/EventCreationPage/EventCreationPage.jsx';
+import { CurrentUserProvider, useCurrentUser } from "./utils/CurrentUserContext.jsx";
 
-let container = document.querySelector("#main");
-
-// customElements.define("multi-select", MultiSelect);
 
 function App() {
-    return (
-        <Router>
-            <Switch>
-                <Route exact path="/">
-                    <MainPage />
-                </Route>
-                <Route path="/create">
-                    <EventCreationPage />
-                </Route>
-                <Route path="/remove/:id">
-                    <EventRemovePage />
-                </Route>
-            </Switch>
-        </Router>
-    )
-};
+    
+  console.log("App");
+  
+  const [users, setUsers] = useState(Store.users);
+  const [events, setEvents] = useState();
+  const { currentUser, fetchCurrentUser } = useCurrentUser();
 
-function render(app, container) { 
-    ReactDOM.render(
-        app,
-        container
-    );
-};
+  useEffect(() => {
+    fetchCurrentUser()
+  }, []);
 
-Store.getCurrentUser()
-.then(() => {
-    if (Store.isLoggedIn) {
-        render (
-            <App />, 
-            container
-        );
-    } else {
-        render (
-            <AuthPage />,
-            container
-        )
+  useEffect(() => {
+    if(currentUser) {
+      Store.getEvents()
+      .then(() => {
+        setEvents(Store.events);
+      });
     }
-})
+    return () => setEvents();
+  }, [currentUser]);
 
+  useEffect(() => {
+    console.log(currentUser);
+  }, [currentUser]);
 
-subscribe("logout", () => {
-    render (
-        <AuthPage />, 
-        container
-    );
-});
+  useEffect(() => {
+    Store.getUsers()
+    .then(() => {
+      setUsers(Store.users);
+    });
+    return () => setUsers();
+  }, []);
 
-subscribe("login", () => {
-    render (
-        <App />, 
-        container
-    );
-});
+  useEffect(() => {
+    subscribe("logout", () => {
+      Store.clearCurrentUser()
+      .then(() => {
+        window.location.hash = "/auth";
+      });
+    });
+    
+    subscribe("login", () => {
+      fetchCurrentUser();
+      window.location.hash = ""; 
+    });
+
+    subscribe("refreshEvents", () => {
+      setEvents(Store.events);
+    })
+  }, []);
+
+  const isAuth = (children) => {
+    return (
+      currentUser === null ? (
+        <Redirect to="/auth" /> 
+      ) : (
+        {...children}
+      )
+    )
+  };
+
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/auth">
+          <AuthPage users={users} />
+        </Route>
+        <Route exact path="/"
+          render={() => isAuth(
+            <MainPage users={users} events={events} />
+          )}
+        />
+        <Route path="/create" 
+          render={() => isAuth(
+            <EventCreationPage users={users} />
+          )}
+        />
+        <Route path="/remove/:id"
+          render={() => isAuth(
+            <EventRemovePage />
+          )}
+        />
+      </Switch>
+    </Router>
+  )
+};
+
+ReactDOM.render(
+  <CurrentUserProvider>
+    <App />
+  </CurrentUserProvider>,
+  document.querySelector("#main")
+);    

@@ -1,16 +1,20 @@
-import React from "react";
-import EventCreationForm from "../../components/newEvent/EventCreationForm.jsx";
+import React, { useEffect, useState } from "react";
+import EventCreationForm from "../../components/EventCreationForm/EventCreationForm.jsx";
+import ErrorsHandler from "../../components/ErrorsHandler/ErrorsHandler.jsx";
 
 import "./EventCreationPage.scss";
 
-// customElements.define("new-event", EventCreationForm);
+export default function EventCreationPage({users}) {
 
-export default function EventCreationPage() {
-
+  const [error, setError] = useState();
+  
   return (
     <div className="event-creation">
-      <EventCreationForm />
-      {/* <new-event /> */}
+        {
+          error && 
+          <ErrorsHandler error={error} />
+        }
+        <EventCreationForm users={users} returnError={value => setError(value)} /> :
     </div>
   )
 }

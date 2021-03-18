@@ -4,18 +4,18 @@ import * as Cookies from "./cookies";
 import { workingDays, workingHours } from "../assets/data";
 
 import { publish, subscribe } from "./eventBus";
+import { ReplaySubject } from "rxjs";
 
 
 class Store {
     constructor() {
         this.state = {};
 
-        subscribe("login", () => {
-            this.getCurrentUser();
-        });
-
         subscribe("participantFilterChanged", (data) => {
-            this.state.events = this.filterEventsByParticipant(data, this.state.basicEvents);
+            this.state.events = this.filterEventsByParticipant(
+                data, 
+                this.state.basicEvents
+            );
             publish("refreshEvents");
         })
 
@@ -36,8 +36,6 @@ class Store {
             formattedArray[day] = this.filterEventsByDay(day, array);
         });
 
-        console.log(formattedArray)
-
         return formattedArray;
     }
 
@@ -54,10 +52,13 @@ class Store {
         return filteredObj;
     }
 
-    filterEventsByParticipant(key, array) {
-        
-        if (key) {
-            let filtered = array.filter(({data}) => data.participants.includes(key));        
+    filterEventsByParticipant({id}, array) {
+
+        if (id) {
+            let filtered = array.filter(({data}) => 
+                data.participants.filter(({value}) => 
+                    value === id).length
+            );
             return this.formatEvents(filtered);
         } else {
             return this.formatEvents(array);
@@ -73,21 +74,31 @@ class Store {
     }
 
     pushEvent(data) {
-        
-        Events.post(data)
-        .then(() => {
-            this.getEvents()
-            .then(() => {
-                publish("refreshEvents");
-            })
-        })
+        return new Promise((resolve, reject) => {
+            if(this.eventsDateIsAvailable(data)) {
+            
+                Events.post(data)
+                .then(() => {
+                    this.getEvents()
+                    .then(() => {
+                        publish("refreshEvents");
+                        resolve();
+                    })
+                })
+            } else {
+                reject("This date is already booked");
+            }
+        });
+    }
+
+    eventsDateIsAvailable({day, time}) {
+        return this.events[day][time] ? false : true;
     }
 
     deleteEvent(id, data) {
         return Events.delete(id)
         .then(() => {
             delete this.state.events[data.day][data.time];
-            console.log(this.state.events);
             window.location.hash = "/";
             publish("refreshEvents");   
         })
@@ -123,13 +134,17 @@ class Store {
         })
     }
 
-    clearCurrentUser() {
+    async clearCurrentUser() {
         Cookies.deleteCookie("currentUser");
+        this.getCurrentUser()
+        .then(() =>{
+            return true;
+        })
     }
 
     async getCurrentUser() {
         let cookies = Cookies.getCookie("currentUser");
-        this.state.currentUser = await cookies ? JSON.parse(cookies) : {};
+        this.state.currentUser = await cookies ? JSON.parse(cookies) : null;
     }
     
     async setCurrentUser(data) {
@@ -157,10 +172,13 @@ class Store {
     }
 
     getEventByDate(day, time) {
-        let eventsByDay = this.state.events[day];
-        let eventsByTime = eventsByDay ? eventsByDay[time] : false;
-
-        return eventsByTime ? eventsByTime : false;
+        if (day && time) {
+        
+            if (Array.isArray(this.events)) {
+               return this.events ? this.events[day][time] : false;
+            }
+            
+        }
     }
 
 

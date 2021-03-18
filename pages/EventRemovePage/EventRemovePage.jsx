@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {useParams} from "react-router-dom";
 import Store from "../../utils/store";  
-import RemoveWindow from "../../components/removeEvent/RemoveWindow.jsx";
+import RemoveWindow from "../../components/RemoveWindow/RemoveWindow.jsx";
 
 import "./EventRemovePage.scss";
 
 export default function EventRemovePage() {
 
   let { id } = useParams();
-  let { data } = Store.getEventById(id)[0];
+  const [data, setData] = useState();
+  
+  useEffect(() => {
+    if (Store.getEventById(id)) {
+      var {data} = Store.getEventById(id)[0];
+      setData(data);
+    }
+  })
 
   let removeEvent = () => {
     Store.deleteEvent(id, data);
@@ -20,7 +27,10 @@ export default function EventRemovePage() {
 
   return (
     <div className="event-remove-page">
-      <RemoveWindow id={id} name={data.name} removeEvent={removeEvent} closeWindow={closeWindow}/>
+      {
+        data &&
+        <RemoveWindow id={id} name={data.name} removeEvent={removeEvent} closeWindow={closeWindow}/>
+      }
     </div>
   )
 }

@@ -1,29 +1,15 @@
 import "./TableCell.scss";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import EventFlag from "../EventFlag/EventFlag.jsx";
 import Store from "../../utils/store";
 import {subscribe} from "../../utils/eventBus";
 import {onDragOver, onDrop} from "../../utils/draggable";
 
-function TableCell({day, time, className = "", children = ""}) {
-
-	const [eventFlag, setEventFlag] = useState();
-
-	useEffect(() => {
-		setEventFlag(Store.getEventByDate(day, time));
-
-		return () => {
-			setEventFlag(null);
-		}
-	})
+function TableCell({day, time, className = "", children = "", event}) {
 
 	let drop = (evt) => {
 		onDrop(evt, {day, time});
 	}
-
-	subscribe("refreshEvents", () => {
-		setEventFlag(Store.getEventByDate(day, time));
-	})
 
 	return (
 		<div 
@@ -33,7 +19,7 @@ function TableCell({day, time, className = "", children = ""}) {
 			onDrop={drop}
 		>
 			{ children }
-			{ eventFlag ? <EventFlag data={eventFlag} day={day} time={time} /> : "" }
+			{ event ? <EventFlag data={event} day={day} time={time} /> : "" }
 		</div>
 	)
 }

@@ -10,5 +10,5 @@ export function getCookie(key) {
 }
 
 export function deleteCookie(key) {
-  document.cookie = `${key}=; Max-Age=0`;
+  document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
