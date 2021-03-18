@@ -97,6 +97,9 @@
           -webkit-box-shadow: $shadow4;
           box-shadow: $shadow4;
         }
+        &.error {
+          background-color: rgb(255, 119, 119);
+        }
     }
 
     &__button-wrapper {
